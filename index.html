@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quinze Jours Pour Réussir!</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+:root{--cream:#faf7f0;--warm:#fff9f0;--ink:#1a1208;--rust:#c0392b;--olive:#5d7a3e;--gold:#d4a017;--lolive:#e8f0dc;--lrust:#fde8e6;--border:#d9cfc0;--shadow:rgba(26,18,8,.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+header{background:var(--ink);color:var(--cream);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px var(--shadow)}
+header h1{font-family:'Playfair Display',serif;font-size:1.3rem}
+header h1 span{color:var(--gold);font-style:italic}
+.pbar-wrap{flex:1;margin:0 24px;height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+#pbar{height:100%;background:linear-gradient(90deg,var(--gold),var(--rust));border-radius:3px;transition:width .5s;width:0}
+.score-badge{font-size:.85rem;background:var(--gold);color:var(--ink);padding:4px 12px;border-radius:20px;font-weight:700;white-space:nowrap}
+.app{display:flex;min-height:calc(100vh - 55px)}
+nav{width:230px;background:var(--warm);border-right:1.5px solid var(--border);padding:16px 0;overflow-y:auto;position:sticky;top:55px;height:calc(100vh - 55px);flex-shrink:0}
+nav h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:#999;padding:0 18px 10px}
+.cbtn{display:flex;align-items:center;gap:9px;width:100%;padding:9px 18px;border:none;background:none;cursor:pointer;text-align:left;font-family:'Lato',sans-serif;font-size:.81rem;color:var(--ink);transition:background .2s;border-left:3px solid transparent}
+.cbtn:hover:not(.locked){background:var(--lolive)}
+.cbtn.active{background:var(--lolive);border-left-color:var(--olive);font-weight:700;color:var(--olive)}
+.cbtn.done .cnum,.cbtn.active .cnum{background:var(--olive);color:#fff}
+.cbtn.locked{color:#bbb;cursor:not-allowed}
+.cbtn.locked .cnum{background:#e0dbd0;color:#bbb}
+.cnum{background:var(--border);color:var(--ink);font-size:.68rem;font-weight:700;width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cico{margin-left:auto;font-size:.8rem}
+main{flex:1;padding:32px 44px;max-width:800px}
+/* WELCOME */
+#welcome{padding:32px 0}
+.book-cover{display:flex;gap:32px;align-items:flex-start;margin-bottom:28px}
+.cover-img{background:var(--ink);color:var(--cream);padding:28px 36px;border-radius:4px;box-shadow:8px 8px 0 var(--gold);flex-shrink:0}
+.cover-img h2{font-family:'Playfair Display',serif;font-size:1.7rem;line-height:1.2}
+.cover-img h2 em{color:var(--gold)}
+.cover-img p{font-size:.82rem;color:var(--border);margin-top:6px}
+.instructions{background:var(--warm);border:1.5px solid var(--border);border-radius:6px;padding:20px 24px;font-size:.88rem;line-height:1.75}
+.instructions h3{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:10px;color:var(--olive)}
+.instructions p{margin-bottom:8px;color:#444}
+.instructions p:last-child{margin-bottom:0}
+.wform{margin:22px 0 16px}
+.wform label{display:block;font-size:.88rem;font-weight:700;margin-bottom:6px;color:#555}
+.wform input{padding:9px 14px;border:1.5px solid var(--border);border-radius:4px;font-family:'Lato',sans-serif;font-size:.95rem;width:280px;background:var(--warm)}
+.wform input:focus{outline:none;border-color:var(--olive)}
+#wprog{display:none;margin-bottom:18px}
+.wptitle{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:#999;margin-bottom:10px}
+#wgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:360px;margin:0 auto 12px}
+.wcell{aspect-ratio:1;border-radius:4px;border:1.5px solid var(--border);background:var(--warm);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#bbb}
+.wcell.done{background:var(--olive);border-color:var(--olive);color:#fff}
+#wtotal{font-size:.88rem;color:#666;margin-bottom:16px}
+#wtotal span{font-weight:700;color:var(--olive)}
+.btn-start{background:var(--olive);color:#fff;border:none;padding:13px 32px;font-family:'Playfair Display',serif;font-size:1.05rem;border-radius:3px;cursor:pointer;box-shadow:0 4px 12px rgba(93,122,62,.3);transition:background .2s}
+.btn-start:hover{background:#4a6530}
+/* CHAPTER */
+#chapter-view{display:none}
+.ch-header{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.ch-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:var(--rust);font-weight:700}
+.ch-header h2{font-family:'Playfair Display',serif;font-size:1.9rem}
+.ch-divider{height:3px;background:linear-gradient(90deg,var(--rust),transparent);margin-bottom:22px;border-radius:2px}
+.story{background:var(--warm);border:1.5px solid var(--border);border-radius:6px;padding:24px 28px;margin-bottom:22px;line-height:1.85;font-size:.95rem;box-shadow:0 2px 8px var(--shadow);position:relative}
+.story::before{content:'\201C';font-family:'Playfair Display',serif;font-size:4rem;color:var(--border);position:absolute;top:-6px;left:12px;line-height:1}
+.story p{margin-bottom:9px}
+.story p:last-child{margin-bottom:0}
+.dialogue{padding-left:14px;border-left:3px solid var(--gold);font-style:italic}
+/* VOCABULARY */
+.voc{color:var(--rust);border-bottom:1px dashed var(--rust);cursor:pointer;font-style:normal}
+.voc.active{background:rgba(192,57,43,.1);border-radius:2px}
+#vocbox{background:var(--ink);color:var(--cream);padding:10px 16px;border-radius:4px;font-size:.84rem;margin-top:12px;display:none;line-height:1.5}
+#vocbox strong{color:var(--gold)}
+.voc-legend{font-size:.78rem;color:#888;margin-bottom:18px;font-style:italic}
+/* QUIZ */
+.quiz{background:var(--lolive);border:1.5px solid #b8d090;border-radius:6px;padding:22px 26px;margin-bottom:22px}
+.quiz h3{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:16px;color:#3a5020}
+.qblock{margin-bottom:18px}
+.qblock p{font-size:.88rem;font-weight:700;margin-bottom:8px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:7px}
+.obtn{background:#fff;border:1.5px solid #b8d090;border-radius:4px;padding:8px 14px;text-align:left;cursor:pointer;font-size:.86rem;font-family:'Lato',sans-serif;transition:all .2s;color:var(--ink)}
+.obtn:hover:not(:disabled){background:#d4e8b0;border-color:var(--olive)}
+.obtn.correct{background:#d4e8b0;border-color:var(--olive);font-weight:700}
+.obtn.wrong{background:var(--lrust);border-color:var(--rust)}
+.obtn:disabled{cursor:default}
+.tfopts{display:flex;gap:10px}
+.tfbtn{flex:1;padding:9px;border:1.5px solid #b8d090;border-radius:4px;background:#fff;cursor:pointer;font-family:'Lato',sans-serif;font-size:.88rem;font-weight:700;transition:all .2s}
+.tfbtn.v{color:var(--olive)}.tfbtn.f{color:var(--rust)}
+.tfbtn.correct{background:#d4e8b0;border-color:var(--olive)}
+.tfbtn.wrong{background:var(--lrust);border-color:var(--rust)}
+.tfbtn:hover:not(:disabled){transform:translateY(-1px)}
+.tfbtn:disabled{cursor:default;transform:none}
+.fb{margin-top:7px;font-size:.81rem;padding:5px 11px;border-radius:3px;display:none}
+.fb.show{display:block}
+.fb.ok{background:#d4e8b0;color:#2d5010}
+.fb.ko{background:var(--lrust);color:#8b1a1a}
+/* NAV BUTTONS */
+.navbtns{display:flex;justify-content:space-between;align-items:center;padding-top:18px;border-top:1.5px solid var(--border)}
+.nbtn{padding:10px 22px;border:2px solid var(--ink);background:none;font-family:'Playfair Display',serif;font-size:.92rem;cursor:pointer;border-radius:3px;transition:all .2s}
+.nbtn:hover:not(:disabled){background:var(--ink);color:var(--cream)}
+.nbtn.primary{background:var(--ink);color:var(--cream)}
+.nbtn.primary:hover{background:#333}
+.nbtn:disabled{opacity:.35;cursor:default}
+.nbtn:disabled:hover{background:none;color:var(--ink)}
+
+/* CHAPTER DONE BANNER */
+#ch-banner{display:none;background:linear-gradient(135deg,var(--lolive),#d4e8b0);border:1.5px solid #b8d090;border-radius:6px;padding:16px 22px;margin-bottom:22px;display:none;align-items:center;justify-content:space-between;gap:16px}
+#ch-banner.show{display:flex}
+.banner-left{font-size:.9rem;color:#2d5010}
+.banner-left strong{display:block;font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:2px}
+.banner-stars{font-size:1.1rem;letter-spacing:2px}
+/* RESULTS */
+#results{display:none;text-align:center;padding:50px 20px}
+#results h2{font-family:'Playfair Display',serif;font-size:2.2rem;margin-bottom:12px}
+.bigscore{font-size:3.8rem;font-weight:700;color:var(--olive);margin:16px 0}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:22px 0;text-align:left}
+.chres{background:var(--warm);border:1.5px solid var(--border);border-radius:4px;padding:8px 12px;font-size:.78rem}
+.chres .rname{font-weight:700;margin-bottom:3px;font-size:.72rem;color:#555}
+.chres .rscore{font-size:1.05rem;font-weight:700}
+.chres.perfect .rscore{color:var(--olive)}.chres.good .rscore{color:var(--gold)}.chres.bad .rscore{color:var(--rust)}
+.btn-restart{background:var(--rust);color:#fff;border:none;padding:12px 28px;font-family:'Playfair Display',serif;font-size:1rem;border-radius:3px;cursor:pointer;margin-top:16px}
+.btn-restart:hover{background:#a02020}
+.btn-pdf{background:var(--ink);color:#fff;border:none;padding:12px 28px;font-family:'Playfair Display',serif;font-size:1rem;border-radius:3px;cursor:pointer;margin-top:16px;margin-left:10px}
+.btn-pdf:hover{background:#333}
+#pdfrep{display:none}
+@media print{
+  nav,header,.navbtns,.quiz,#welcome,#results,#chapter-view,#ch-done{display:none!important}
+  #pdfrep{display:block!important}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1><span>Quinze Jours</span> Pour Réussir!</h1>
+  <div class="pbar-wrap"><div id="pbar"></div></div>
+  <div class="score-badge">⭐ <span id="hscore">0</span> pts</div>
+</header>
+<div class="app">
+  <nav>
+    <h2>Chapitres</h2>
+    <div id="chapnav"></div>
+  </nav>
+  <main>
+    <div id="welcome">
+      <div class="book-cover">
+        <div class="cover-img">
+          <h2>Quinze Jours<br><em>Pour Réussir!</em></h2>
+          <p>Pierre Delaisne · Niveau A1</p>
+        </div>
+        <div class="instructions">
+          <h3>📖 Lecture : mode d'emploi</h3>
+          <p>Lire est d'abord un plaisir : ne le gâche pas en t'arrêtant à chaque mot inconnu. <strong>Continue !</strong> La plupart du temps, tu auras tout compris au bout de quelques lignes grâce au contexte.</p>
+          <p>Si tu as l'impression que tu ne comprends pas quelque chose d'important, <strong>reprends au début du chapitre.</strong></p>
+          <p>Les mots suivis d'un <span style="color:#c0392b;border-bottom:1px dashed #c0392b">astérisque*</span> ont une définition : passe la souris dessus pour la lire.</p>
+          <p>Avant de passer au chapitre suivant, réponds aux questions pour vérifier ta compréhension.</p>
+        </div>
+      </div>
+      <div class="wform">
+        <label for="sname">Ton prénom et nom :</label>
+        <input type="text" id="sname" placeholder="ex. Marie Dupont" autocomplete="off">
+      </div>
+      <div id="wprog">
+        <div class="wptitle">Ta progression</div>
+        <div id="wgrid"></div>
+        <div id="wtotal"></div>
+      </div>
+      <button class="btn-start" id="btnstart">Commencer la lecture →</button>
+    </div>
+
+    <div id="chapter-view">
+      <div class="ch-header">
+        <span class="ch-label" id="chlabel"></span>
+        <h2 id="chtitle"></h2>
+      </div>
+      <div class="ch-divider"></div>
+      <div class="story" id="chstory"></div>
+      <div class="voc-legend">* Passe la souris sur les mots soulignés en rouge pour voir leur définition.</div>
+      <div id="ch-banner"><div class="banner-left"><strong id="banner-title"></strong><span id="banner-msg"></span></div><div class="banner-stars" id="banner-stars"></div></div><div class="quiz" id="chquiz"></div>
+      <div class="navbtns">
+        <button class="nbtn" id="btnprev">← Précédent</button>
+        <span id="chcounter" style="font-size:.85rem;color:#888"></span>
+        <button class="nbtn primary" id="btnnext">Suivant →</button>
+      </div>
+    </div>
+
+    <div id="results">
+      <h2>🎉 Félicitations!</h2>
+      <p style="color:#666;margin-bottom:8px">Tu as terminé <em>Quinze Jours Pour Réussir!</em></p>
+      <div class="bigscore" id="finalscore"></div>
+      <p style="color:#888;font-size:.9rem">points sur <span id="maxscore"></span> possibles</p>
+      <div class="chgrid" id="chresults"></div>
+      <button class="btn-restart" id="btnrestart">Recommencer</button>
+      <button class="btn-pdf" id="btnpdf">📄 Télécharger les résultats</button>
+    </div>
+    <div id="pdfrep"></div>
+  </main>
+</div>
+
+
+
+<script>const vocDefs=["famille où les enfants n'ont pas les deux mêmes parents", "personne chargée de la discipline dans un collège", "classe de l'année suivante", "succès, bon résultat", "donner des ordres, tout décider", "qui n'a plus envie de continuer, sans énergie", "lignes peintes sur le sol pour délimiter les places", "petit bâton blanc pour écrire sur le sol ou au tableau", "petit plat servi avant le repas principal", "deux bâtons pour aider à marcher après une blessure", "registre où les visiteurs écrivent leur nom et leurs impressions", "journaux de la ville ou de la région"];
+
+const chapters = [
+  { num:1, title:"Plus que quinze jours!", story:`<p>La famille Chevalier est réunie au restaurant « Le Petit Gourmand ». Il est 20h30. Dans quinze jours, le vendredi 27 mai, le restaurant ouvre ses portes pour la première fois.</p><p>C'est une <span class="voc" data-vid="0">famille recomposée*</span> : Hervé est le père de Tommy (14 ans). Il vient de se marier avec Violaine, la mère de Julie (13 ans). Tommy et Julie vont dans le même collège Chateaubriand et se connaissent bien.</p><p>Ce soir, ils préparent la grande fête d'inauguration. Tommy et Julie finissent la liste des invités sur l'ordinateur. Il faut imprimer les invitations, puis les envoyer à la poste.</p><p class="dialogue'>— Julie et moi, on fait la liste des invités sur l'ordinateur, dit Tommy.</p><p class="dialogue'>— On a presque fini, ajoute Julie.</p><p>Avant de dormir, Violaine dit à Hervé : <em>« Je crois que Tommy ne m'aime pas. »</em> Hervé répond : <em>« Il pense souvent à sa mère. Il faut lui donner du temps. »</em></p>`, questions:[{type:'tf',q:"Tommy et Julie n'ont pas les mêmes parents.",correct:true,fb_ok:"Exact ! C'est une famille recomposée.",fb_ko:"Non — c'est bien une famille recomposée."},{type:'tf',q:"Hervé et Violaine veulent faire une fête pour l'ouverture de leur restaurant.",correct:true,fb_ok:"Oui, l'inauguration du « Petit Gourmand » le 27 mai !",fb_ko:"Si, ils préparent bien une grande fête."},{type:'tf',q:"Violaine est la mère de Tommy.",correct:false,fb_ok:"Exact ! Violaine est la nouvelle femme du père de Tommy.",fb_ko:"Non — Violaine est la mère de Julie."},{type:'tf',q:"Tommy et Julie sont élèves dans le même collège.",correct:true,fb_ok:"Oui, au collège Chateaubriand !",fb_ko:"Si — ils sont tous les deux au collège Chateaubriand."}]},
+  { num:2, title:"L'accident", story:`<p>Pendant le cours de géographie, le <span class="voc" data-vid="1">surveillant*</span> Bernard vient chercher Tommy : son père a eu un accident de voiture. Hervé est à l'hôpital Saint-Vincent, mais il va bien. Violaine aussi était dans la voiture — ce n'est pas grave et elle va rentrer aujourd'hui.</p><p>Tommy et Julie rentrent à la maison. Tommy téléphone à l'hôpital mais son père dort encore après l'opération. Julie parle à sa mère. Violaine lui demande la carte d'assurance d'Hervé et lui rappelle que Robert, le nouveau cuisinier, doit arriver dans l'après-midi.</p><p class="dialogue'>— Ah non ! Je veux bien m'occuper des affaires de papa, mais pas de ton cuisinier, dit Tommy.</p><p>Tommy monte dans sa chambre. C'est Julie qui accueille Robert vers 15h, lui fait visiter le restaurant, lui montre la cuisine et sa chambre. Quand Violaine rentre le soir, Robert a déjà préparé le dîner pour tout le monde. Ce soir-là, tout le monde est de bonne humeur — <em>même Tommy</em>.</p>`, questions:[{type:'tf',q:"Monsieur et madame Chevalier ont eu un accident.",correct:true,fb_ok:"Exact, les deux étaient dans la voiture.",fb_ko:"Si — Hervé et Violaine étaient tous les deux dans la voiture."},{type:'tf',q:"Violaine doit rester à l'hôpital, Hervé peut rentrer à la maison.",correct:false,fb_ok:"C'est le contraire : Violaine rentre, Hervé reste à l'hôpital.",fb_ko:"Non — c'est Violaine qui rentre, Hervé reste à l'hôpital."},{type:'tf',q:"Tommy accueille Robert, le cuisinier, et lui montre la cuisine.",correct:false,fb_ok:"Non, c'est Julie qui accueille Robert.",fb_ko:"Non — c'est Julie qui accueille Robert. Tommy refuse."},{type:'tf',q:"Tommy ne veut pas aider Violaine.",correct:true,fb_ok:"Exact — Tommy n'accepte pas la nouvelle femme de son père.",fb_ko:"Si — Tommy refuse clairement d'aider Violaine."}]},
+  { num:3, title:"Violaine", story:`<p>On découvre le passé de Violaine. Son premier mari Alain (père de Julie) était décorateur. Il aimait voyager mais n'était jamais là quand il y avait des problèmes. Violaine a divorcé.</p><p>Violaine a commencé à travailler dans le restaurant d'Hervé parce qu'elle avait besoin d'argent. Peu à peu, ils se sont mariés.</p><p>Une chose la rend triste : Tommy ne l'aime pas. Pour lui, elle a volé son père et pris la place de sa mère.</p><p>Ce soir, Robert propose d'emmener tout le monde à l'hôpital, puis d'acheter les plantes pour le restaurant. Tommy accepte finalement d'aider.</p><p class="dialogue'>— Merci Robert, avec vous nous sommes sûrs de réussir, disent Violaine, Julie et Tommy en chœur.</p>`, questions:[{type:'tf',q:"Le père de Julie s'appelle Alain.",correct:true,fb_ok:"Oui, Alain Vassiliev est le père de Julie.",fb_ko:"Si — le père de Julie s'appelle Alain."},{type:'tf',q:"Une chose rend Violaine triste : Tommy ne l'aime pas.",correct:true,fb_ok:"Exact — c'est le grand problème de Violaine.",fb_ko:"Non — c'est bien ce qui la rend triste."},{type:'tf',q:"Violaine a commencé à travailler dans le restaurant d'Hervé parce qu'elle avait besoin d'argent.",correct:true,fb_ok:"Exact — c'est pour ça qu'elle est entrée dans la vie d'Hervé.",fb_ko:"Si — Violaine avait besoin d'argent et Hervé cherchait quelqu'un pour l'aider."},{type:'tf',q:"Le premier mari de Violaine s'occupait bien de la famille quand il y avait des problèmes.",correct:false,fb_ok:"Exact — Alain n'était jamais là quand il y avait des problèmes.",fb_ko:"Non — Alain partait souvent en voyage et n'était jamais là quand il y avait des problèmes."}]},
+  { num:4, title:"Le collège", story:`<p>Julie adore l'école : excellente en français et en anglais, elle aime le dessin et la musique. Elle est sûre de passer dans la <span class="voc" data-vid="2">classe supérieure*</span>.</p><p>Tommy est très bon en maths et en sciences, mais il n'aime pas les autres matières. Il s'ennuie en cours. Il a des difficultés en français et ne sait pas s'il va passer.</p><p>Manon, une fille de la classe de Tommy, est amie avec Julie. Elle vient souvent à la maison l'après-midi.</p><p class="dialogue'>— Avec Tommy, ce n'est jamais facile. Mais il s'intéresse à toi, dit Julie à Manon.</p><p class="dialogue'>— C'est sûr ! Quand tu viens, il est toujours un peu bizarre. Il est trop timide.</p><p>Julie a une idée : demander à Tommy d'aider Manon pour un problème de maths, et ensuite Manon l'aidera en français !</p>`, questions:[{type:'tf',q:"Julie est excellente en maths et en physique.",correct:false,fb_ok:"Non — Julie est forte en français et en anglais.",fb_ko:"Non — Julie est excellente en français et en anglais."},{type:'tf',q:"Tommy a besoin d'une bonne note en français pour passer dans la classe supérieure.",correct:true,fb_ok:"Oui, le français est son problème principal.",fb_ko:"Si — Tommy doit avoir une bonne note en français."},{type:'tf',q:"C'est Julie qui a l'idée de demander à Tommy d'aider Manon en maths.",correct:true,fb_ok:"Oui — c'est le plan de Julie pour rapprocher Tommy et Manon !",fb_ko:"Non — c'est bien Julie qui a cette idée."},{type:'tf',q:"Tommy est bon en maths mais il a des difficultés en français.",correct:true,fb_ok:"Oui — c'est exactement son problème scolaire.",fb_ko:"Si — Tommy est fort en maths mais faible en français."}]},
+  { num:5, title:"Un gros problème", story:`<p>Hervé doit encore rester quelques jours à l'hôpital. L'inauguration est dans huit jours. Violaine a besoin de Tommy, mais lui refuse de travailler sous ses ordres.</p><p class="dialogue'>— L'inauguration doit être une <span class="voc" data-vid="3">réussite*</span>. Mais ta mère veut toujours <span class="voc" data-vid="4">commander*</span>, et je ne peux pas accepter ça, dit Tommy à Julie.</p><p class="dialogue'>— Je te comprends. Mais comment aider ton père tout seul ?</p><p>Tommy et Julie décident de s'organiser à deux, avec Manon et Robert. Tommy a des idées pour informer les invités et rendre la soirée spéciale — il veut les réaliser librement.</p><p>Le lendemain, Tommy révise son français avec Manon. Avec elle, tout devient intéressant et facile. Pour la première fois depuis longtemps, Tommy est heureux avant de s'endormir.</p>`, questions:[{type:'tf',q:"Tommy veut aider son père, mais il ne veut pas que Violaine commande tout le temps.",correct:true,fb_ok:"Exactement — c'est tout le conflit du chapitre.",fb_ko:"Si — Tommy veut aider mais de façon indépendante."},{type:'tf',q:"Tommy et Julie vont demander à Robert et à Manon de les aider.",correct:true,fb_ok:"Oui — une équipe de quatre !",fb_ko:"Si — ils décident de demander l'aide de Manon et Robert."},{type:'tf',q:"Julie veut demander à Violaine de les aider pour faire une surprise à Hervé.",correct:false,fb_ok:"Exact — c'est une surprise, sans le dire à Violaine.",fb_ko:"Non — c'est une surprise, ils ne veulent pas en parler à Violaine."},{type:'tf',q:"Quand il est avec Manon, Tommy trouve tout intéressant.",correct:true,fb_ok:"Oui, Manon a un effet magique sur Tommy !",fb_ko:"Si — avec Manon, tout devient intéressant et facile."}]},
+  { num:6, title:"La réconciliation", story:`<p>Julie a retrouvé son père Alain pour manger une glace. Il revient d'un long voyage et montre des photos de châteaux, de restaurants, de jardins... Il y a peut-être des idées à prendre pour l'inauguration ! Julie lui explique la situation : l'accident d'Hervé, les tensions entre Tommy et Violaine, le manque de temps. Alain propose d'aider et accepte l'invitation à l'inauguration.</p><p>À la maison, Julie a une longue discussion avec Violaine qui est <span class="voc" data-vid="5">découragée*</span>. Violaine pense à inviter des musiciens pour animer la soirée, mais c'est trop cher et trop tard. Julie lui explique surtout que Tommy veut aider <em>librement</em>, sans être commandé.</p><p class="dialogue'>— Tommy veut faire quelque chose, mais librement. Il n'est plus un bébé. Il faut lui faire confiance, dit Julie.</p><p>Le jeudi soir, Violaine et Tommy ont une longue discussion et trouvent un accord : Violaine s'occupe du menu et de la décoration, Tommy est responsable de l'animation de la soirée.</p><p class="dialogue'>— C'est parfait, répond Tommy. J'espère que tu vas aimer mes idées.</p>`, questions:[{type:'tf',q:"Alain, le père de Julie, revient d'un long voyage quand Julie le retrouve.",correct:true,fb_ok:"Oui — il lui montre même des photos de son voyage !",fb_ko:"Si — Alain revient bien d'un long voyage."},{type:'tf',q:"Violaine décide finalement d'inviter des musiciens pour l'inauguration.",correct:false,fb_ok:"Exact — c'est trop cher et trop tard.",fb_ko:"Non — l'idée est abandonnée car trop chère et trop tardive."},{type:'tf',q:"Julie explique à Violaine que Tommy veut aider librement, sans être commandé.",correct:true,fb_ok:"Oui — c'est le message central de Julie à sa mère.",fb_ko:"Si — Julie défend Tommy et explique qu'il faut lui faire confiance."},{type:'tf',q:"Après une longue discussion, Tommy et Violaine trouvent un accord.",correct:true,fb_ok:"Oui, la réconciliation a lieu !",fb_ko:"Si — ils trouvent finalement un accord."}]},
+  { num:7, title:"Tommy", story:`<p>Tommy va voir Robert dans la cuisine. Robert lui explique qu'il faut se mettre à la place des invités : ils seront curieux de voir le nouveau menu, de découvrir la cuisine du nouveau cuisinier, la nouvelle décoration...</p><p class="dialogue'>— Ce n'est pas un menu ordinaire. C'est un souvenir pour les invités : il faut mettre la date, expliquer pourquoi c'est une fête, parler des spécialités, dit Robert.</p><p class="dialogue'>— On peut aussi illustrer le menu, écrire quelque chose sur l'histoire du restaurant, comprend Tommy.</p><p>Tommy pense à Julie et Manon : les deux filles ont toujours de bonnes idées, elles pourront l'aider pour la présentation et l'illustration des menus. Reste le problème du parking !</p><p>Tommy traverse le parking : c'est une vraie catastrophe ! Il est sale, les bandes blanches ont disparu, les rosiers ne sont pas coupés, le passage entre le parking et le restaurant est fermé.</p><p>Robert propose : si Tommy invite ses copains à venir nettoyer le parking mercredi, Robert leur prépare un magnifique buffet. Tommy accepte.</p>`, questions:[{type:'qcm',q:"Comment Tommy veut-il rendre le menu spécial ?",options:["En invitant des musiciens","En illustrant le menu et en écrivant l'histoire du restaurant","En décorant la salle avec des ballons","En distribuant des cadeaux"],correct:1,fb_ok:"Oui ! Le menu devient un souvenir personnalisé.",fb_ko:"Non — l'idée est d'illustrer le menu et d'écrire l'histoire du restaurant."},{type:'qcm',q:"Pourquoi le parking est-il « une vraie catastrophe » ?",options:["Il est trop petit","Il est sale, sans bandes, rosiers non coupés, passage fermé","Il n'a pas d'éclairage","Les voitures sont mal garées"],correct:1,fb_ok:"Exact, plusieurs problèmes à régler !",fb_ko:"Non — le parking est sale, sans bandes blanches, rosiers non taillés et passage fermé."},{type:'qcm',q:"Comment Julie et Manon peuvent-elles aider Tommy ?",options:["En nettoyant le parking","En aidant pour la présentation et l'illustration du menu","En cuisinant avec Robert","En accueillant les invités"],correct:1,fb_ok:"Oui — les deux filles ont toujours de bonnes idées !",fb_ko:"Non — Tommy pense que Julie et Manon peuvent l'aider pour la présentation et l'illustration du menu."},{type:'qcm',q:"Qu'est-ce que Robert propose pour récompenser les copains qui nettoient le parking ?",options:["De l'argent de poche","Un magnifique buffet","Des places gratuites à l'inauguration","Des livres de recettes"],correct:1,fb_ok:"Oui ! Un buffet préparé par le chef !",fb_ko:"Non — Robert propose de préparer un buffet pour les copains."}]},
+  { num:8, title:"Les copains", story:`<p>Le mercredi après-midi, vingt élèves du collège Chateaubriand viennent travailler devant « Le Petit Gourmand ».</p><p>On balaye d'abord, puis on passe le jet d'eau. Arthur aide Tommy à calculer et numéroter les <span class="voc" data-vid="6">bandes blanches*</span>. Ils marquent d'abord les places à la <span class="voc" data-vid="7">craie*</span>, puis passent la peinture.</p><p>Quatre filles se mettent à chanter et tout le monde reprend le refrain en chœur. Tommy est heureux. Louise, qui a pris des photos depuis le début de l'après-midi, les montre sur son téléphone portable pour que tout le monde puisse voir la différence entre l'état du parking à leur arrivée et le résultat du soir.</p><p>Incident : Manon se retrouve collée sur une bande fraîche et laisse des traces blanches derrière elle.</p><p class="dialogue'>— Rien ! On ne peut pas retirer la peinture, dit Tommy.</p><p>Julie a une idée géniale : réunir les traces de pas de Manon pour créer une place réservée aux handicapés. Tommy sourit à Manon.</p><p>À la fin, Robert a préparé un magnifique buffet : charcuterie, dix salades, plateau de fromages, desserts... <em>Le Petit Gourmand des gourmands !</em></p>`, questions:[{type:'qcm',q:"Combien d'élèves du collège viennent aider Tommy ?",options:["Dix élèves","Quinze élèves","Vingt élèves","Trente élèves"],correct:2,fb_ok:"Oui, vingt élèves — garçons et filles !",fb_ko:"Non — ce sont vingt élèves qui viennent aider."},{type:'qcm',q:"Que font les adolescents avant de peindre les bandes blanches ?",options:["Ils mesurent avec un mètre ruban","Ils marquent d'abord les places à la craie","Ils font un plan sur ordinateur","Ils demandent à Robert"],correct:1,fb_ok:"Exact — la craie permet de corriger avant la peinture !",fb_ko:"Non — ils marquent d'abord les places à la craie."},{type:'qcm',q:"Pourquoi est-ce que Louise montre des photos sur son téléphone portable ?",options:["Pour les envoyer aux journalistes","Pour montrer la différence entre le début et la fin de la journée","Pour envoyer à Hervé à l'hôpital","Pour publier sur Internet"],correct:1,fb_ok:"Oui, pour montrer tout le travail accompli !",fb_ko:"Non — Louise veut montrer la différence entre l'arrivée et la fin de journée."},{type:'qcm',q:"Qui a l'idée de faire une place réservée aux handicapés avec les traces de pas ?",options:["Tommy","Robert","Manon","Julie"],correct:3,fb_ko:"Non — c'est Julie qui a cette idée géniale !",fb_ok:"Oui, Julie est vraiment ingénieuse !"}]},
+  { num:9, title:"Manon", story:`<p>Au collège, tous les élèves parlent du « Petit Gourmand ». Il faut encore trouver une grande surprise.</p><p>Tommy demande à Robert d'expliquer le menu : un petit tour du monde ! Vins français et italiens, poisson français, recette d'Amérique du Sud, viande d'Écosse, <span class="voc" data-vid="8">hors-d'œuvre*</span> d'Afrique du Nord, entrée russe, dessert autrichien, glaces italiennes...</p><p>Avec Tommy, Manon illustre les menus : un micro pour les journalistes, un drapeau pour les politiques... Chaque menu porte le nom de l'invité. Au dos : l'histoire du restaurant avec des photos.</p><p>À 22h, le dernier menu sort de l'imprimante : cinquante-six menus au total. Violaine vient chercher Manon. Dans le couloir, Tommy et Manon s'embrassent tendrement.</p><p class="dialogue'>— Tu es vraiment sympa, Violaine, dit Tommy. C'est normal, vous faites tellement de choses pour la fête.</p>`, questions:[{type:'tf',q:"Tommy et Manon impriment cinquante-six menus différents pour les invités.",correct:true,fb_ok:"Oui, un menu personnalisé pour chaque invité !",fb_ko:"Si — ils font bien 56 menus, un par invité."},{type:'tf',q:"Pour l'inauguration, Robert propose des plats de toutes les régions françaises.",correct:false,fb_ok:"Exact — c'est un tour du monde, pas seulement français.",fb_ko:"Non — Robert propose un tour du monde culinaire."},{type:'tf',q:"Tommy est très timide et il a peur d'embrasser Manon.",correct:false,fb_ok:"Exact — il l'embrasse tendrement !",fb_ko:"Non — Tommy a perdu sa timidité et embrasse Manon."},{type:'tf',q:"La maman de Manon vient la chercher en voiture à 22 heures.",correct:false,fb_ok:"Exact — c'est Violaine qui vient chercher Manon.",fb_ko:"Non — c'est Violaine, la nouvelle femme du père de Tommy, qui vient chercher Manon."}]},
+  { num:10, title:"Le retour", story:`<p>C'est le vendredi 27 mai, le grand jour. Violaine va chercher Hervé à l'hôpital. Il l'attend dans un fauteuil. Il a besoin de deux <span class="voc" data-vid="9">béquilles*</span>, mais tout va bien !</p><p>En chemin, Violaine raconte comment Tommy et Manon ont fait 56 menus personnalisés et comment Tommy a tout organisé.</p><p>Quand Hervé arrive au restaurant, il trouve un parking propre, des rosiers coupés, des bandes blanches repeintes. Il remercie Tommy et Julie.</p><p>Alain, le père de Julie, arrive le premier ce soir avec un cadeau : un <span class="voc" data-vid="10">livre d'or*</span> pour le restaurant. Hervé écrit : <em>Vendredi 27 mai – Inauguration du « Petit Gourmand ».</em></p><p>Violaine invite Manon à rester pour la soirée. Tommy est heureux.</p>`, questions:[{type:'qcm',q:"De quoi Hervé a-t-il besoin pour marcher ?",options:["D'un fauteuil roulant","D'une seule béquille","De deux béquilles","D'une canne"],correct:2,fb_ok:"Oui — deux béquilles, mais il peut marcher !",fb_ko:"Non — Hervé a besoin de deux béquilles."},{type:'qcm',q:"Pourquoi Hervé est-il étonné en arrivant au parking ?",options:["Parce qu'il y a beaucoup de voitures","Parce que le parking est propre avec de nouvelles bandes et les rosiers coupés","Parce que les invités sont déjà là","Parce qu'il y a des décorations partout"],correct:1,fb_ok:"Oui — il ne savait pas que les jeunes avaient tout nettoyé !",fb_ko:"Non — Hervé est étonné de trouver le parking propre, les bandes et les rosiers taillés."},{type:'qcm',q:"Pourquoi Manon peut-elle rester pour la soirée ?",options:["Parce que ses parents viennent aussi","Parce que Violaine l'invite","Parce qu'elle est déjà invitée","Parce que Tommy le demande à ses parents"],correct:1,fb_ok:"Oui — Violaine l'invite spontanément !",fb_ko:"Non — Violaine invite Manon à rester pour la soirée."},{type:'qcm',q:"Qu'est-ce qu'Alain offre à Hervé et Violaine ?",options:["Un bouquet de fleurs","Une bouteille de champagne","Un livre d'or pour le restaurant","Un chèque-cadeau"],correct:2,fb_ok:"Quelle excellente idée !",fb_ko:"Non — Alain offre un livre d'or pour le restaurant."}]},
+  { num:11, title:"L'inauguration", story:`<p>L'inauguration est une réussite totale. La nouvelle salle est admirée : plus d'espace, plus de lumière, chaises confortables, grandes tables. Les menus personnalisés ont beaucoup de succès.</p><p>Le plus beau moment : le discours de Tommy. Il dit que pour lui tout est nouveau, qu'il veut vivre dans le présent et penser au futur. « Le Petit Gourmand », c'est le restaurant de sa nouvelle famille. L'accident de son père lui a permis de mieux comprendre Violaine, la nouvelle femme de son père, et de découvrir la solidarité. Ce discours touche beaucoup Violaine et fait plaisir à Hervé et Julie.</p><p>En partant, M. Dupuis, le professeur de français de Tommy, parle avec Hervé. Il lui explique que Tommy a beaucoup changé depuis l'accident, qu'il va avoir une bonne note au dernier contrôle de français — grâce notamment à l'aide de Julie et de Manon — et qu'il va passer dans la classe supérieure.</p><p>Le lundi suivant, la <span class="voc" data-vid="11">presse locale*</span> parle de l'inauguration en première page. Les affaires marchent bien dans les semaines qui suivent. En juillet, Hervé est content de recevoir les médecins de l'hôpital Saint-Vincent à dîner : chaque année, ils font un repas de fin d'année dans un restaurant de la région, et cette année ils ont choisi « Le Petit Gourmand ».</p>`, questions:[{type:'tf',q:"Violaine n'a pas aimé le discours de Tommy.",correct:false,fb_ok:"Exact — le discours de Tommy la touche beaucoup.",fb_ko:"Non — le discours touche profondément Violaine."},{type:'tf',q:"Tommy va passer dans la classe supérieure.",correct:true,fb_ok:"Oui — M. Dupuis le confirme à Hervé.",fb_ko:"Si — M. Dupuis confirme que Tommy va passer."},{type:'tf',q:"Grâce à Manon et à Julie, Tommy va avoir une bonne note en français.",correct:true,fb_ok:"Oui — M. Dupuis le mentionne explicitement.",fb_ko:"Si — M. Dupuis souligne l'aide de Julie et de Manon."},{type:'tf',q:"Les médecins de l'hôpital Saint-Vincent viennent dîner au « Petit Gourmand » en juillet.",correct:true,fb_ok:"Oui — ils choisissent « Le Petit Gourmand » pour leur repas de fin d'année.",fb_ko:"Si — en juillet, les médecins choisissent « Le Petit Gourmand »."}]},
+  { num:12, title:"Les vacances", story:`<p>En juillet, Hervé marche sans béquilles. Les affaires marchent bien. Tommy propose d'inviter Manon en vacances chez les grands-parents au bord de la mer : elle les a beaucoup aidés et ne part pas en vacances cette année.</p><p class="dialogue'>— Tu penses que des vacances à la mer chez tes grands-parents, c'est une bonne manière de lui dire merci ? demande Violaine.</p><p class="dialogue'>— Oui, c'est ça. Et puis, ce n'est pas drôle de rester toute seule à la maison, ajoute Tommy.</p><p>Les parents de Manon acceptent. Toute la famille part : Hervé, Violaine, Tommy, Julie et Manon.</p><p>Au bord de la mer, Tommy réfléchit aux changements de l'année : le mariage de son père, son plaisir d'être souvent avec Manon, sa nouvelle famille. Il pense aussi au collège : quand il réfléchit, il trouve que l'école est souvent intéressante — une grande évolution pour lui !</p><p>Ce n'est pas toujours facile de parler de ses problèmes quand on est adolescent. Hervé a beaucoup de travail. Violaine n'est pas sa mère. Julie et Manon sont ses amies, mais elles sont adolescentes comme lui. Tommy ne peut pas tout leur dire. Une seule personne peut vraiment l'écouter sans poser de questions : son grand-père.</p><p class="dialogue'>— Je crois que j'ai changé. J'ai souvent envie de parler à quelqu'un, dit Tommy.</p><p class="dialogue'>— Tu as de la chance : tu as Julie, tu as Manon. C'est beaucoup, répond son grand-père.</p>`, questions:[{type:'tf',q:"Manon part en vacances avec les Chevalier.",correct:true,fb_ok:"Oui — une belle récompense !",fb_ko:"Si — Manon est bien invitée à venir en vacances."},{type:'tf',q:"Tommy a changé : maintenant il peut parler de tout avec Violaine, Julie et Manon.",correct:false,fb_ok:"Exact — Tommy a changé mais certaines choses restent pour lui seul ou pour son grand-père.",fb_ko:"Non — Tommy a changé mais ne peut pas tout dire à tout le monde."},{type:'tf',q:"Quand il réfléchit, Tommy trouve le collège souvent intéressant.",correct:true,fb_ok:"Oui — c'est une grande évolution pour lui !",fb_ko:"Si — Tommy a changé son regard sur l'école."},{type:'tf',q:"Tommy peut parler de ses vrais problèmes avec son grand-père.",correct:true,fb_ok:"Oui — son grand-père est la personne idéale.",fb_ko:"Si — le grand-père est la seule personne qui peut vraiment l'écouter."}]}
+];
+
+let cur=0, scores=new Array(chapters.length).fill(null),
+    chScores=new Array(chapters.length).fill(0),
+    chCorrect=new Array(chapters.length).fill(0),
+    answered=[], pendingNext=null;
+
+function totalScore(){ return chCorrect.reduce((a,b)=>a+b,0); }
+function totalQ(){ return chapters.reduce((s,ch)=>s+ch.questions.length,0); }
+
+function isUnlocked(i){ return i===0||scores[i-1]!==null; }
+
+function buildNav(){
+  const nav=document.getElementById('chapnav');
+  nav.innerHTML='';
+  chapters.forEach((ch,i)=>{
+    const unlocked=isUnlocked(i);
+    const btn=document.createElement('button');
+    btn.className='cbtn'+(i===cur?' active':'')+(scores[i]!==null?' done':'')+(!unlocked?' locked':'');
+    const icon=scores[i]!==null?'<span class="cico">✓</span>':!unlocked?'<span class="cico">🔒</span>':'';
+    btn.innerHTML=`<span class="cnum">${ch.num}</span><span style="flex:1;line-height:1.3">${ch.title}</span>${icon}`;
+    btn.addEventListener('click',()=>{
+      if(!isUnlocked(i)) return;
+      document.getElementById('welcome').style.display='none';
+      document.getElementById('chapter-view').style.display='block';
+      goChapter(i);
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function updateProgress(){
+  const done=scores.filter(s=>s!==null).length;
+  const ts=totalScore();
+  const tq=totalQ();
+  document.getElementById('pbar').style.width=(done/chapters.length*100)+'%';
+  document.getElementById('hscore').textContent=ts;
+  if(done>0){
+    document.getElementById('wprog').style.display='block';
+    let g='';
+    chapters.forEach((ch,i)=>{
+      g+=`<div class="wcell${scores[i]!==null?' done':''}">${scores[i]!==null?'✓':ch.num}</div>`;
+    });
+    document.getElementById('wgrid').innerHTML=g;
+    document.getElementById('wtotal').innerHTML=`Score : <span>${ts}</span> / ${tq} pts — ${done} / ${chapters.length} chapitres`;
+  }
+}
+
+function goChapter(idx){
+  if(idx<0||idx>=chapters.length||!isUnlocked(idx)) return;
+  cur=idx;
+  const ch=chapters[idx];
+  document.getElementById('chlabel').textContent=`Chapitre ${ch.num}`;
+  document.getElementById('chtitle').textContent=ch.title;
+  document.getElementById('chstory').innerHTML=ch.story;
+  const vb=document.getElementById('vocbox'); if(vb){vb.style.display='none';}
+  const bn=document.getElementById('ch-banner'); if(bn){bn.classList.remove('show');}
+  document.getElementById('chcounter').textContent=`${idx+1} / ${chapters.length}`;
+  document.getElementById('btnprev').disabled=idx===0;
+  const isLast=idx===chapters.length-1;
+  document.getElementById('btnnext').textContent=isLast?'Terminer →':'Suivant →';
+  document.getElementById('btnnext').disabled=scores[idx]===null;
+  buildQuiz(ch,idx);
+  buildNav();
+  updateProgress();
+  window.scrollTo(0,0);
+}
+
+function buildQuiz(ch,ci){
+  answered=new Array(ch.questions.length).fill(false);
+  let h='<h3>✏️ Questions et activités</h3>';
+  ch.questions.forEach((q,qi)=>{
+    h+=`<div class="qblock"><p>${qi+1}. ${q.q}</p>`;
+    if(q.type==='tf'){
+      h+=`<div class="tfopts">
+        <button class="tfbtn v" data-ci="${ci}" data-qi="${qi}" data-ans="true">✓ Vrai</button>
+        <button class="tfbtn f" data-ci="${ci}" data-qi="${qi}" data-ans="false">✗ Faux</button>
+      </div>`;
+    } else {
+      h+=`<div class="opts">`;
+      q.options.forEach((opt,oi)=>{
+        h+=`<button class="obtn" data-ci="${ci}" data-qi="${qi}" data-oi="${oi}">${opt}</button>`;
+      });
+      h+=`</div>`;
+    }
+    h+=`<div class="fb" id="fb${qi}"></div></div>`;
+  });
+  const container=document.getElementById('chquiz');
+  container.innerHTML=h;
+  container.querySelectorAll('.tfbtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      answerTF(+btn.dataset.ci,+btn.dataset.qi,btn.dataset.ans==='true');
+    });
+  });
+  container.querySelectorAll('.obtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      answerQCM(+btn.dataset.ci,+btn.dataset.qi,+btn.dataset.oi);
+    });
+  });
+}
+
+function answerTF(ci,qi,ans){
+  if(answered[qi]) return;
+  answered[qi]=true;
+  const q=chapters[ci].questions[qi];
+  const ok=ans===q.correct;
+  document.getElementById('chquiz').querySelectorAll(`.tfbtn[data-qi="${qi}"]`).forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.ans==='true'===q.correct) b.classList.add('correct');
+    else if(b.dataset.ans===String(ans)&&!ok) b.classList.add('wrong');
+  });
+  // fix: compare correctly
+  document.getElementById('chquiz').querySelectorAll(`.tfbtn[data-qi="${qi}"]`).forEach(b=>{
+    b.classList.remove('correct','wrong');
+    const bVal=b.dataset.ans==='true';
+    if(bVal===q.correct) b.classList.add('correct');
+    else if(bVal===ans&&!ok) b.classList.add('wrong');
+  });
+  showFb(qi,ok,q.fb_ok,q.fb_ko);
+  if(ok) chCorrect[ci]++;
+  markDone(ci);
+  updateProgress();
+}
+
+function answerQCM(ci,qi,oi){
+  if(answered[qi]) return;
+  answered[qi]=true;
+  const q=chapters[ci].questions[qi];
+  const ok=oi===q.correct;
+  document.getElementById('chquiz').querySelectorAll(`.obtn[data-qi="${qi}"]`).forEach(b=>{
+    b.disabled=true;
+    if(+b.dataset.oi===q.correct) b.classList.add('correct');
+    else if(+b.dataset.oi===oi&&!ok) b.classList.add('wrong');
+  });
+  showFb(qi,ok,q.fb_ok,q.fb_ko);
+  if(ok) chCorrect[ci]++;
+  markDone(ci);
+  updateProgress();
+}
+
+function showFb(qi,ok,ok_msg,ko_msg){
+  const fb=document.getElementById('fb'+qi);
+  fb.textContent=(ok?'✓ '+ok_msg:'✗ '+ko_msg);
+  fb.className='fb show '+(ok?'ok':'ko');
+}
+
+function markDone(ci){
+  if(!answered.every(Boolean)||scores[ci]!==null) return;
+  scores[ci]=chCorrect[ci];
+  chScores[ci]=chCorrect[ci];
+  buildNav();
+  showChapterDone(ci);
+}
+
+function showChapterDone(ci){
+  const ch=chapters[ci];
+  const q=ch.questions.length;
+  const s=chCorrect[ci];
+  const pct=Math.round(s/q*100);
+  const stars=s===q?'⭐⭐⭐':s>=q*0.75?'⭐⭐':s>=q*0.5?'⭐':'';
+  const msg=pct===100?'Parfait, tu as tout compris !':pct>=75?'Très bien !':pct>=50?'Relis le chapitre pour mieux comprendre.':'Relis le chapitre avant de passer à la suite.';
+  document.getElementById('banner-title').textContent=`${s} / ${q} — ${msg}`;
+  document.getElementById('banner-stars').textContent=stars;
+  document.getElementById('ch-banner').classList.add('show');
+  pendingNext=ci;
+  document.getElementById('btnnext').disabled=false;
+}
+
+function generatePDF(){
+  const name=document.getElementById('sname').value.trim()||'—';
+  const tq=totalQ();
+  const ts=totalScore();
+  const date=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  let rows='';
+  chapters.forEach((ch,i)=>{
+    const q=ch.questions.length, s=chScores[i]||0, done=scores[i]!==null;
+    const pct=done?Math.round(s/q*100):0;
+    const color=!done?'#888':s===q?'#5d7a3e':s>=q/2?'#d4a017':'#c0392b';
+    rows+=`<tr><td style="padding:7px 12px;border-bottom:1px solid #ddd">Ch.${ch.num}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #ddd">${ch.title}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #ddd;font-weight:700;color:${color}">${done?s+'/'+q+' ('+pct+'%)':'Non complété'}</td></tr>`;
+  });
+  const pct=tq>0?Math.round(ts/tq*100):0;
+  document.getElementById('pdfrep').innerHTML=`
+    <div style="font-family:'Helvetica',sans-serif;padding:32px">
+      <h2 style="font-size:1.5rem;margin-bottom:4px">Quinze Jours Pour Réussir! — Résultats</h2>
+      <p style="color:#666;margin-bottom:24px;font-size:.88rem">Élève : <strong>${name}</strong> &nbsp;|&nbsp; Date : ${date}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:.88rem">
+        <thead><tr style="background:#1a1208;color:#fff">
+          <th style="padding:8px 12px;text-align:left">N°</th>
+          <th style="padding:8px 12px;text-align:left">Chapitre</th>
+          <th style="padding:8px 12px;text-align:left">Score</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p style="margin-top:20px;font-size:1rem;font-weight:700;text-align:right">
+        Total : ${ts} / ${tq} points (${pct}%)
+      </p>
+    </div>`;
+  document.getElementById('pdfrep').style.display='block';
+  window.print();
+  document.getElementById('pdfrep').style.display='none';
+}
+
+// Init
+buildNav();
+updateProgress();
+
+document.getElementById('btnstart').addEventListener('click',()=>{
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('chapter-view').style.display='block';
+  goChapter(0);
+});
+document.getElementById('btnprev').addEventListener('click',()=>goChapter(cur-1));
+document.getElementById('btnnext').addEventListener('click',()=>{
+  const ci=pendingNext!==null?pendingNext:cur;
+  pendingNext=null;
+  if(ci===chapters.length-1) showResults();
+  else goChapter(ci+1);
+});
+document.getElementById('btnrestart').addEventListener('click',()=>{
+  scores=new Array(chapters.length).fill(null);
+  chScores=new Array(chapters.length).fill(0);
+  chCorrect=new Array(chapters.length).fill(0);
+  cur=0;
+  document.getElementById('results').style.display='none';
+  document.getElementById('chapter-view').style.display='block';
+  document.getElementById('wprog').style.display='none';
+  buildNav(); updateProgress(); goChapter(0);
+});
+document.getElementById('btnpdf').addEventListener('click', generatePDF);
+
+
+function showResults(){
+  document.getElementById('chapter-view').style.display='none';
+  document.getElementById('results').style.display='block';
+  const ts=totalScore(), tq=totalQ();
+  document.getElementById('finalscore').textContent=ts;
+  document.getElementById('maxscore').textContent=tq;
+  let h='';
+  chapters.forEach((ch,i)=>{
+    const q=ch.questions.length, s=chScores[i]||0, done=scores[i]!==null;
+    const cls=!done?'':s===q?'perfect':s>=q/2?'good':'bad';
+    h+=`<div class="chres ${cls}"><div class="rname">Ch.${ch.num} ${ch.title}</div><div class="rscore">${done?s+'/'+q:'—'}</div></div>`;
+  });
+  document.getElementById('chresults').innerHTML=h;
+  buildNav();
+  updateProgress();
+}
+
+// Vocabulary definitions - click to show
+document.addEventListener('click', function(e) {
+  let el = e.target;
+  while(el && el !== document.body) {
+    if(el.classList && el.classList.contains('voc')) {
+      const vid = parseInt(el.getAttribute('data-vid'));
+      const box = document.getElementById('vocbox');
+      // toggle off if same word
+      if(el.classList.contains('active')) {
+        el.classList.remove('active');
+        box.style.display = 'none';
+        return;
+      }
+      // deactivate previous
+      document.querySelectorAll('.voc.active').forEach(v => v.classList.remove('active'));
+      el.classList.add('active');
+      const word = el.textContent.replace('*','');
+      const def = vocDefs[vid] || '';
+      box.innerHTML = '<strong>' + word + '</strong> : ' + def;
+      // insert box after the story div
+      const story = document.getElementById('chstory');
+      if(story) story.parentNode.insertBefore(box, story.nextSibling);
+      box.style.display = 'block';
+      return;
+    }
+    el = el.parentElement;
+  }
+});
+</script>
+<div id="vocbox"></div>
+</body>
+</html>
